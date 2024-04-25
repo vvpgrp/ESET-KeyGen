@@ -158,14 +158,14 @@ class Hi2inAPI(object):
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.window_handle = self.driver.current_window_handle
-        try:
-            self.driver.execute_script(f'{GET_EBCN}("mailtext mailtextfix")[0]') # for --try-auto-cloudflare
-        except:
-            console_log('Failed to pass сloudflare captcha in automatic mode!!!', ERROR)
-            time.sleep(3) # exit-delay
-            sys.exit(-1)
         if args['try_auto_cloudflare']:
-            console_log('Successfully passed сloudflare captcha in automatic mode!!!', OK)
+            try:
+                self.driver.execute_script(f'{GET_EBCN}("mailtext mailtextfix")[0]')
+                console_log('Successfully passed сloudflare captcha in automatic mode!!!', OK)
+            except:
+                console_log('Failed to pass сloudflare captcha in automatic mode!!!', ERROR)
+                time.sleep(3) # exit-delay
+                sys.exit(-1)
         SharedTools.untilConditionExecute(
             self.driver,
             f'return ({GET_EBCN}("mailtext mailtextfix")[0] !== null && {GET_EBCN}("mailtext mailtextfix")[0].value !== "")'
@@ -225,14 +225,14 @@ class TempMailAPI(object):
         self.driver.close()
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.window_handle = self.driver.current_window_handle
-        try:
-            self.driver.execute_script(f"return {GET_EBID}('mail').value") # for --try-auto-cloudflare
-        except:
-            console_log('Failed to pass сloudflare captcha in automatic mode!!!', ERROR)
-            time.sleep(3) # exit-delay
-            sys.exit(-1)
         if args['try_auto_cloudflare']:
-            console_log('Successfully passed сloudflare captcha in automatic mode!!!', OK)
+            try:
+                self.driver.execute_script(f"return {GET_EBID}('mail').value")
+                console_log('Successfully passed сloudflare captcha in automatic mode!!!', OK)
+            except:
+                console_log('Failed to pass сloudflare captcha in automatic mode!!!', ERROR)
+                time.sleep(3) # exit-delay
+                sys.exit(-1)
         for _ in range(DEFAULT_MAX_ITER):
             self.email = self.driver.execute_script(f"return {GET_EBID}('mail').value")
             if self.email == '':
@@ -333,7 +333,7 @@ class SharedTools(object):
                 driver_options.add_argument('--disable-dev-shm-usage')
             try:
                 driver = Chrome(options=driver_options, service=ChromeService(executable_path=webdriver_path))
-            except:
+            except Exception as E:
                 if traceback.format_exc().find('only supports') != -1: # Fix for downloaded chrome update
                     console_log('Downloaded Google Chrome update is detected! Using new chrome executable file!', INFO)
                     browser_path = traceback.format_exc().split('path')[-1].split('Stacktrace')[0].strip()
@@ -341,6 +341,8 @@ class SharedTools(object):
                         browser_path = browser_path[:-10]+'new_chrome.exe'
                         driver_options.binary_location = browser_path
                         driver = Chrome(options=driver_options, service=ChromeService(executable_path=webdriver_path))
+                else:
+                  raise E
         elif browser_name.lower() == 'firefox':
             driver_options = FirefoxOptions()
             driver_options.binary_location = browser_path
