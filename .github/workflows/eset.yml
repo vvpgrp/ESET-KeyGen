@@ -19,7 +19,8 @@ on:
         options:
         - 1secmail
         - 10minutemail
-        default: 1secmail
+        - guerrillamail
+        default: guerrillamail
 jobs:
   GenerateKey:
     runs-on: ubuntu-latest
