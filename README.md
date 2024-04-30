@@ -1,8 +1,17 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 29.04.2024 at 03:59 UTC+3)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 30.04.2024 at 11:17 UTC+3)
 
 ![](img/project_preview.png)
 
+
+---
+### Project files are detected as viruses by ESET, this is not true!
+To stop my project from being blocked by antivirus, add the project folder to the exclusion list:
+
+ESET -> Settings -> Advanced Setup -> Detection Engine -> Exclusions -> Detection Exclusions -> add ```full path to ESET-KeyGen-main folder```
+
+That's it!
+---
 
 ---
 ### My github page is currently blocked by ESET Antivirus, so you will not be able to access the project.

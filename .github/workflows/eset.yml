@@ -18,9 +18,11 @@ on:
         type: choice
         options:
         - 1secmail
+        - hi2in
         - 10minutemail
         - guerrillamail
-        default: guerrillamail
+        - developermail
+        default: developermail
 jobs:
   GenerateKey:
     runs-on: ubuntu-latest
