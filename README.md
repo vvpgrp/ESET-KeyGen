@@ -1,8 +1,12 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 30.04.2024 at 11:17 UTC+3)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 04.05.2024 at 19:15 UTC+3)
 
 ![](img/project_preview.png)
 
+---
+# If my page or project will be blocked, please refer to these links
+* My personal [Telegram](https://t.me/rzc0d3r)
+* My [private channel with archives of my projects](https://t.me/+mSAXxWA9mf1jODI6)
 
 ---
 ### Project files are detected as viruses by ESET, this is not true!
