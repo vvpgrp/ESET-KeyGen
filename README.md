@@ -1,5 +1,5 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 18.05.2024 at 11:16 UTC+3)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 20.05.2024 at 17:42 UTC+3)
 
 ![](img/project_preview.png)
 
@@ -72,6 +72,7 @@ Delete your current ESET HOME account
 1. [Account Generator](wiki/AccountGenerator.md)
 2. [Key Generator](wiki/KeyGenerator.md)
 3. [Command Line Arguments](wiki/CommandLineArguments.md)
+4. [Updater](wiki/Updater.md)
 ---
 
 # Additional information
@@ -85,7 +86,8 @@ Delete your current ESET HOME account
    If still getting this error reinstall ESET and try again.
 6. Found an activation error under the code ecp4125, which appears when you try to activate the antivirus with an account.
    Perhaps not everyone has it error, but still try it, and if it does not work, use the keys. 
-7. You can test the argument ```--skip-webdriver-menu``` theoretically the program itself will install the browser and web driver to it!
-
+7. You can use the ``--skip-webdriver-menu`` argument, which will skip my WebDriverInstaller shell (Useful for various bugs with webdriver updates, and when using a non-standard browser like Brave or some dev-build, etc).
+   The program will also install the browser itself via selenium-manager if it is not present in your system!
+8. If you are having trouble initializing any web driver, I recommend manually specifying the path to the browser .exe file via ``--custom-browser-location``
 --- 
 ## This project exists in its current state thanks to all the people who have contributed and to all who create issues, which we solve together!
