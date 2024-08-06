@@ -2,6 +2,17 @@ from selenium.webdriver import Chrome, ChromeOptions, ChromeService
 from selenium.webdriver import Firefox, FirefoxOptions, FirefoxService
 from selenium.webdriver import Edge, EdgeOptions, EdgeService
 
+import logging
+
+logger = logging.getLogger('selenium')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('selenium-logs.txt')
+logger.addHandler(handler)
+logging.getLogger('selenium.webdriver.remote').setLevel(logging.WARN)
+logging.getLogger('selenium.webdriver.common').setLevel(logging.DEBUG)
+
+from .WebDriverInstaller import GOOGLE_CHROME, MICROSOFT_EDGE, MOZILLA_FIREFOX
+
 import traceback
 import colorama
 import random
@@ -90,9 +101,9 @@ def console_log(text='', logger_type=None, fill_text=None):
                 ni = i
                 break
             print()
-        if logger_type.fill_text and fill_text is None:
-            fill_text = True
-        if logger_type.fill_text and fill_text:
+        if fill_text is None:
+            fill_text = logger_type.fill_text
+        if fill_text:
             print(logger_type.data + ' ' + logger_type.color + text[ni:] + colorama.Style.RESET_ALL)
         else:
             print(logger_type.data + ' ' + text[ni:])
@@ -145,16 +156,19 @@ def dataGenerator(length, only_numbers=False):
     return ''.join(data)
 
 def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path = '', headless=True):
+    if browser_path is None:
+        browser_path = ''
+    console_log(f'{colorama.Fore.LIGHTMAGENTA_EX}-- Browsers Initializer --{colorama.Fore.RESET}\n')
     if os.name == 'posix': # For Linux
         if sys.platform.startswith('linux'):
-            console_log(f'Initializing {browser_name}-webdriver for Linux', INFO)
+            console_log(f'Initializing {browser_name} for Linux', INFO)
         elif sys.platform == "darwin":
-            console_log(f'Initializing {browser_name}-webdriver for macOS', INFO)
+            console_log(f'Initializing {browser_name} for macOS', INFO)
     elif os.name == 'nt':
-        console_log(f'Initializing {browser_name}-webdriver for Windows', INFO)
+        console_log(f'Initializing {browser_name} for Windows', INFO)
     driver_options = None
     driver = None
-    if browser_name.lower() == 'chrome':
+    if browser_name == GOOGLE_CHROME:
         driver_options = ChromeOptions()
         driver_options.binary_location = browser_path
         driver_options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -167,7 +181,7 @@ def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path
             driver_options.add_argument('--disable-dev-shm-usage')
         try:
             driver = Chrome(options=driver_options, service=ChromeService(executable_path=webdriver_path))
-        except Exception as E:
+        except Exception as e:
             if traceback.format_exc().find('only supports') != -1: # Fix for downloaded chrome update
                 browser_path = traceback.format_exc().split('path')[-1].split('Stacktrace')[0].strip()
                 if 'new_chrome.exe' in os.listdir(browser_path[:-10]):
@@ -176,10 +190,24 @@ def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path
                     driver_options.binary_location = browser_path
                     driver = Chrome(options=driver_options, service=ChromeService(executable_path=webdriver_path))
             else:
-                raise E
-    elif browser_name.lower() == 'firefox':
-        driver_options = FirefoxOptions()
+                raise e
+    elif browser_name == MICROSOFT_EDGE:
+        driver_options = EdgeOptions()
+        driver_options.use_chromium = True
         driver_options.binary_location = browser_path
+        driver_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        driver_options.add_argument("--log-level=3")
+        driver_options.add_argument("--lang=en-US")
+        if headless:
+            driver_options.add_argument('--headless')
+        if os.name == 'posix': # For Linux
+            driver_options.add_argument('--no-sandbox')
+            driver_options.add_argument('--disable-dev-shm-usage')
+        driver = Edge(options=driver_options, service=EdgeService(executable_path=webdriver_path))
+    elif browser_name == MOZILLA_FIREFOX:
+        driver_options = FirefoxOptions()
+        if browser_path.strip() != '':
+            driver_options.binary_location = browser_path
         driver_options.set_preference('intl.accept_languages', 'en-US')
         if headless:
             driver_options.add_argument('--headless')
@@ -193,19 +221,6 @@ def initSeleniumWebDriver(browser_name: str, webdriver_path = None, browser_path
             pass
         os.environ['TMPDIR'] = (os.getcwd()+'/firefox_tmp').replace('\\', '/')
         driver = Firefox(options=driver_options, service=FirefoxService(executable_path=webdriver_path))
-    elif browser_name.lower() == 'edge':
-        driver_options = EdgeOptions()
-        driver_options.use_chromium = True
-        driver_options.binary_location = browser_path
-        driver_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        driver_options.add_argument("--log-level=3")
-        driver_options.add_argument("--lang=en-US")
-        if headless:
-            driver_options.add_argument('--headless')
-        if os.name == 'posix': # For Linux
-            driver_options.add_argument('--no-sandbox')
-            driver_options.add_argument('--disable-dev-shm-usage')
-        driver = Edge(options=driver_options, service=EdgeService(executable_path=webdriver_path))
     return driver
 
 def parseToken(email_obj, driver=None, eset_business=False, delay=DEFAULT_DELAY, max_iter=DEFAULT_MAX_ITER):

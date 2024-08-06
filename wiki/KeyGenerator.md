@@ -1,16 +1,8 @@
 ## 1. Generation using implemented email APIs
 > If you use ```--email-api tempmail```, you need to have the cloudflare captcha solved!
 > Then you need to press Enter after you see the email site, without fail (**[INPT]** console message type)!
-
+>
 > Also, if you see a message like **[INPT]** in the console, it means that you need to do keyboard input into the console!
-
-> You can also try the command line argument ```--try-auto-cloudflare``` which will try to automatically pass cloudflare captcha!
-
-<details>
-  <summary>Example generation through --email-api tempmail</summary>
-  
-  ![Windows](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/img/key_run_win_tempmail.png)
-</details>
 
 ---
 
@@ -22,7 +14,7 @@
   python main.py --chrome --key
   ```
   ```
-  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --key
+  ESET-KeyGen_v1.4.9.6_win64.exe --chrome --key
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -33,14 +25,14 @@
 </details>
 
 <details>
-  <summary>ESET Endpoint Security + ESET Server Security</summary>
+  <summary>ESET Endpoint Security + ESET Server Security [NOW NOT WORKING]</summary>
   
   1. Run main.py or executable file use [MBCI](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/wiki/MBCI-Inferface.md):
   ```
   python main.py --chrome --business-key
   ```
   ```
-  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --business-key
+  ESET-KeyGen_v1.4.9.6_win64.exe --chrome --business-key
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -64,7 +56,7 @@
   python main.py --chrome --key --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --key --custom-email-api
+  ESET-KeyGen_v1.4.9.6_win64.exe --chrome --key --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -88,14 +80,14 @@
 </details>
 
 <details>
-  <summary>ESET Endpoint Security + ESET Server Security</summary>
+  <summary>ESET Endpoint Security + ESET Server Security [NOW NOT WORKING]</summary>
   
   1. Run main.py or executable file use [MBCI](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/wiki/MBCI-Inferface.md):
   ```
   python main.py --chrome --business-key --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.4.9.3_win64.exe --chrome --business-key --custom-email-api
+  ESET-KeyGen_v1.4.9.6_win64.exe --chrome --business-key --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 

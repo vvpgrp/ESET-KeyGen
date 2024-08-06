@@ -108,14 +108,15 @@ class EsetKeygen(object):
 
         console_log('\nSending a request for a license...', INFO)
         uCE(self.driver, f"return typeof {GET_EBID}('email') === 'object'")
-        try:
-            exec_js(f"return {GET_EBID}('email')").click() # fix for ElementNotInteractableException: X is not reachable by keyboard
+        try: # fix for ElementNotInteractableException: X is not reachable by keyboard
+            exec_js(f"return {GET_EBID}('email').click()")
+            exec_js(f"return {GET_EBID}('email')").click()
         except:
             pass
         exec_js(f"return {GET_EBID}('email')").send_keys(self.email_obj.email)
         exec_js(f"return {GET_EBAV}('button', 'data-label', 'device-protect-get-installer-send-email-btn')").click()
         for _ in range(DEFAULT_MAX_ITER):
-            time.sleep(0.5)
+            time.sleep(0.7)
             try:
                 btn = exec_js(f"return {GET_EBAV}('button', 'data-label', 'device-protect-get-installer-send-email-btn')")
                 if btn.text.lower() == 'send email':
@@ -156,7 +157,7 @@ class EsetBusinessRegister(object):
         self.driver = driver
         self.eset_password = eset_password
         self.window_handle = None
-
+        
     def createAccount(self):
         exec_js = self.driver.execute_script
         uCE = untilConditionExecute
@@ -283,3 +284,4 @@ class EsetBusinessKeygen(object):
             return license_name, license_key, license_out_date
         else:
             raise RuntimeError('Error!')
+

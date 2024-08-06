@@ -1,5 +1,5 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 31.07.2024 at 15:18 UTC+3)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 06.08.2024 at 03:43 UTC+3)
 
 ![](img/project_preview.png)
 
@@ -49,7 +49,7 @@ It will ask the number of accounts, keys to be generated.
 2. [How to Install Firefox on Linux](https://support.mozilla.org/en-US/kb/install-firefox-linux)
 3. [How to Install Firefox on Mac](https://support.mozilla.org/en-US/kb/how-download-and-install-firefox-mac)
 
-#### Microsoft Edge (The project fully supports it only on Windows)
+#### Microsoft Edge (fully supports)
 1. [Download](https://www.microsoft.com/en-us/edge/download?form=MA13L8)
 
 ---
