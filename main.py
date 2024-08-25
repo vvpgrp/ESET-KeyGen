@@ -3,8 +3,8 @@ from modules.WebDriverInstaller import *
 # Bypassing ESET antivirus detection
 from modules.EsetTools import EsetRegister as ER
 from modules.EsetTools import EsetKeygen as EK
-#from modules.EsetTools import EsetBusinessRegister as EBR
-#from modules.EsetTools import EsetBusinessKeygen as EBK
+from modules.EsetTools import EsetProtectHubRegister as EPHR
+from modules.EsetTools import EsetProtectHubKeygen as EPHK
 
 from modules.SharedTools import *
 from modules.EmailAPIs import *
@@ -18,10 +18,9 @@ import datetime
 import argparse
 import time
 import sys
-import os
 import re
 
-VERSION = ['v1.5.0.0', 1500]
+VERSION = ['v1.5.0.4', 1504]
 LOGO = f"""
 ███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗
 ██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║
@@ -52,7 +51,7 @@ if datetime.datetime.now().day == 6 and datetime.datetime.now().month == 8: # Bi
 
 # -- Quick settings [for Developers to quickly change behavior without changing all files] --
 DEFAULT_EMAIL_API = 'developermail'
-AVAILABLE_EMAIL_APIS = ['1secmail', 'hi2in', '10minutemail', 'tempmail', 'guerrillamail', 'developermail']
+AVAILABLE_EMAIL_APIS = ['1secmail', '10minutemail', 'guerrillamail', 'developermail']
 WEB_WRAPPER_EMAIL_APIS = ['10minutemail', 'hi2in', 'tempmail', 'guerrillamail']
 EMAIL_API_CLASSES = {
     'guerrillamail': GuerRillaMailAPI,
@@ -69,10 +68,10 @@ args = {
     'edge': False,
 
     'key': True,
-    'small-business-key': False,
+    'small_business_key': False,
+    'endpoint_key': False,
     'account': False,
-    'business_key': False,
-    'business_account': False,
+    'protecthub_account': False,
     'only_webdriver_update': False,
     'update': False,
 
@@ -104,7 +103,7 @@ def RunMenu():
             args,
             title='Modes of operation',
             action='store_true',
-            args_names=['key', 'small-business-key', 'account', 'only-webdriver-update', 'update'],
+            args_names=['key', 'small-business-key', 'endpoint-key', 'account', 'protecthub-account', 'only-webdriver-update', 'update'],
             default_value='key')
     )
     SettingMenu.add_item(
@@ -187,8 +186,10 @@ def parse_argv():
         ## Modes of operation
         args_modes = args_parser.add_mutually_exclusive_group(required=True)
         args_modes.add_argument('--key', action='store_true', help='Creating a license key for ESET Smart Security Premium')
-        args_modes.add_argument('--account', action='store_true', help='Creating a ESET HOME Account (To activate the free trial version)')
         args_modes.add_argument('--small-business-key', action='store_true', help='Creating a license key for ESET Small Business Security (1 key - 5 devices)')
+        args_modes.add_argument('--endpoint-key', action='store_true', help='Creating a license key for ESET Endpoint Security')
+        args_modes.add_argument('--account', action='store_true', help='Creating a ESET HOME Account (To activate the free trial version)')
+        args_modes.add_argument('--protecthub-account', action='store_true', help='Creating a ESET ProtectHub Account (To activate the free trial version)')
         args_modes.add_argument('--only-webdriver-update', action='store_true', help='Updates/installs webdrivers and browsers without generating account and license key')
         args_modes.add_argument('--update', action='store_true', help='Switching to program update mode - Overrides all arguments that are available!!!')
         # Optional
@@ -200,7 +201,6 @@ def parse_argv():
         args_parser.add_argument('--skip-update-check', action='store_true', help='Skips checking for program updates')
         args_parser.add_argument('--no-logo', action='store_true', help='Replaces ASCII-Art with plain text')
         args_parser.add_argument('--disable-progress-bar', action='store_true', help='Disables the webdriver download progress bar')
-        #args_parser.add_argument('--try-auto-cloudflare',action='store_true', help='Removes the prompt for the user to press Enter when solving cloudflare captcha. In some cases it may go through automatically, which will give the opportunity to use tempmail in automatic mode!')
         try:
             global args
             args = vars(args_parser.parse_args())
@@ -212,9 +212,6 @@ def main():
     if len(sys.argv) == 1: # for Menu
         print()
     try:
-        # disabling the ability to use business generation (since that method is dead)
-        args['business_key'] = False
-        args['business_account'] = False
         # check program updates
         if args['update']:
             print(f'{Fore.LIGHTMAGENTA_EX}-- Updater --{Fore.RESET}\n')
@@ -244,7 +241,7 @@ def main():
         # changing input arguments for special cases
         if platform.release() == '7' and sys.platform.startswith('win'): # fix for Windows 7
             args['no_headless'] = True
-        elif args['business_account'] or args['business_key'] or args['email_api'] in ['tempmail']:
+        elif args['endpoint_key'] or args['protecthub_account'] or args['email_api'] in ['tempmail']:
             args['no_headless'] = True
         driver = None
         webdriver_path = None
@@ -266,7 +263,7 @@ def main():
         else:
             sys.exit(0)
 
-        # main part of the programd
+        # main part of the program
         console_log(f'\n{Fore.LIGHTMAGENTA_EX}-- KeyGen --{Fore.RESET}\n')
         if not args['custom_email_api']:  
             console_log(f'[{args["email_api"]}] Mail registration...', INFO)
@@ -274,14 +271,17 @@ def main():
                 email_obj = EMAIL_API_CLASSES[args['email_api']](driver)
             else: # real APIs without the need for a browser
                 email_obj = EMAIL_API_CLASSES[args['email_api']]()
-            email_obj.init()
-            console_log('Mail registration completed successfully!', OK)
+            try:
+                email_obj.init()
+                console_log('Mail registration completed successfully!', OK)
+            except:
+                pass
         else:
             email_obj = CustomEmailAPI()
             while True:
                 email = input(f'[  {colorama.Fore.YELLOW}INPT{colorama.Fore.RESET}  ] {colorama.Fore.CYAN}Enter the email address you have access to: {colorama.Fore.RESET}').strip()
                 try:
-                    matched_email = re.match(r'[-a-z0-9+]+@[a-z]+(\.[a-z]+)+', email).group()
+                    matched_email = re.match(r'[-a-z0-9+.]+@[a-z]+(\.[a-z]+)+', email).group()
                     if matched_email == email:
                         email_obj.email = matched_email
                         console_log('Mail has the correct syntax!', OK)
@@ -290,79 +290,83 @@ def main():
                         raise RuntimeError
                 except:
                     console_log('Invalid email syntax!!!', ERROR)
-        eset_password = dataGenerator(10)
         
-        # standart generator
-        if args['account'] or args['key'] or args['small_business_key']:
-            ER_obj = ER(email_obj, eset_password, driver)
-            ER_obj.createAccount()
-            ER_obj.confirmAccount()
-            output_line = '\n'.join([
-                    '',
-                    '----------------------------------',
-                    f'Account Email: {email_obj.email}',
-                    f'Account Password: {eset_password}',
-                    '----------------------------------',
-                    ''
-            ])        
-            output_filename = 'ESET ACCOUNTS.txt'
-            if args['key'] or args['small_business_key']:
-                output_filename = 'ESET KEYS.txt'
-                EK_obj = EK(email_obj, driver, 'ESET HOME' if args['key'] else 'SMALL BUSINESS')
-                EK_obj.sendRequestForKey()
-                license_name, license_key, license_out_date = EK_obj.getLicenseData()
+        if email_obj.email is not None:
+            eset_password = dataGenerator(10)
+            # ESET HOME
+            if args['account'] or args['key'] or args['small_business_key']:
+                ER_obj = ER(email_obj, eset_password, driver)
+                ER_obj.createAccount()
+                ER_obj.confirmAccount()
                 output_line = '\n'.join([
-                    '',
-                    '----------------------------------',
-                    f'Account Email: {email_obj.email}',
-                    f'Account Password: {eset_password}',
-                    '',
-                    f'License Name: {license_name}',
-                    f'License Key: {license_key}',
-                    f'License Out Date: {license_out_date}',
-                    '----------------------------------',
-                    ''
+                        '',
+                        '-------------------------------------------------',
+                        f'Account Email: {email_obj.email}',
+                        f'Account Password: {eset_password}',
+                        '-------------------------------------------------',
+                        ''
                 ])
-                
-        """# business generator
-        elif args['business_account'] or args['business_key']:
-            EBR_obj = EBR(email_obj, eset_password, driver)
-            EBR_obj.createAccount()
-            EBR_obj.confirmAccount()
-            output_line = '\n'.join([
-                    '',
-                    '----------------------------------',
-                    f'Business Account Email: {email_obj.email}',
-                    f'Business Account Password: {eset_password}',
-                    '----------------------------------',
-                    ''
-            ])    
-            output_filename = 'ESET ACCOUNTS.txt'
-            if args['business_key']:
-                output_filename = 'ESET KEYS.txt'
-                EBK_obj = EBK(email_obj, eset_password, driver)
-                EBK_obj.sendRequestForKey()
-                license_name, license_key, license_out_date = EBK_obj.getLicenseData()
+                output_filename = 'ESET ACCOUNTS.txt'
+                if args['key'] or args['small_business_key']:
+                    output_filename = 'ESET KEYS.txt'
+                    EK_obj = EK(email_obj, driver, 'ESET HOME' if args['key'] else 'SMALL BUSINESS')
+                    EK_obj.sendRequestForKey()
+                    license_name, license_key, license_out_date = EK_obj.getLicenseData()
+                    output_line = '\n'.join([
+                        '',
+                        '-------------------------------------------------',
+                        f'Account Email: {email_obj.email}',
+                        f'Account Password: {eset_password}',
+                        '',
+                        f'License Name: {license_name}',
+                        f'License Key: {license_key}',
+                        f'License Out Date: {license_out_date}',
+                        '-------------------------------------------------',
+                        ''
+                    ])
+                    
+            # ESET ProtectHub
+            elif args['protecthub_account'] or args['endpoint_key']:
+                EPHR_obj = EPHR(email_obj, eset_password, driver)
+                EPHR_obj.createAccount()
+                EPHR_obj.confirmAccount()
+                EPHR_obj.activateAccount()
                 output_line = '\n'.join([
-                    '',
-                    '----------------------------------',
-                    f'Business Account Email: {email_obj.email}',
-                    f'Business Account Password: {eset_password}',
-                    '',
-                    f'License Name: {license_name}',
-                    f'License Key: {license_key}',
-                    f'License Out Date: {license_out_date}',
-                    '----------------------------------',
-                    ''
-                ])"""
+                        '',
+                        '---------------------------------------------------------------------',
+                        f'ESET ProtectHub Account Email: {email_obj.email}',
+                        f'ESET ProtectHub Account Password: {eset_password}',
+                        '---------------------------------------------------------------------',
+                        ''
+                ])    
+                output_filename = 'ESET ACCOUNTS.txt'
+                if args['endpoint_key']:
+                    output_filename = 'ESET KEYS.txt'
+                    EPHK_obj = EPHK(email_obj, eset_password, driver)
+                    license_name, license_key, license_out_date = EPHK_obj.getLicenseData()
+                    if license_name is not None:
+                        output_line = '\n'.join([
+                            '',
+                            '---------------------------------------------------------------------',
+                            f'ESET ProtectHub Account Email: {email_obj.email}',
+                            f'ESET ProtectHub Account Password: {eset_password}',
+                            '',
+                            f'License Name: {license_name}',
+                            f'License Key: {license_key}',
+                            f'License Out Date: {license_out_date}',
+                            '---------------------------------------------------------------------',
+                            ''
+                        ])
 
-        # end
-        console_log(output_line)
-        date = datetime.datetime.now()
-        f = open(f"{str(date.day)}.{str(date.month)}.{str(date.year)} - "+output_filename, 'a')
-        f.write(output_line)
-        f.close()
-    
+            # end
+            console_log(output_line)
+            date = datetime.datetime.now()
+            f = open(f"{str(date.day)}.{str(date.month)}.{str(date.year)} - "+output_filename, 'a')
+            f.write(output_line)
+            f.close()
+        else:
+            console_log('Mail registration was not completed, try using a different Email API!\n', ERROR)
+        
     except Exception as E:
         traceback_string = traceback.format_exc()
         if str(type(E)).find('selenium') and traceback_string.find('Stacktrace:') != -1: # disabling stacktrace output

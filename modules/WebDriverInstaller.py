@@ -51,11 +51,11 @@ class WebDriverInstaller(object):
                 self.platform[1].append('linux32')
         elif sys.platform == "darwin":
             self.platform[0] = 'mac'
-            if for_firefox:
+            if self.browser_name == MOZILLA_FIREFOX:
                 self.platform[1] = ['macos']
             elif platform.processor() == "arm":
                 self.platform[1] = ['mac-arm64', 'mac_arm64', 'mac64_m1']
-                if for_firefox:
+                if self.browser_name == MOZILLA_FIREFOX:
                     self.platform[1] = ['macos-aarch64']
             elif platform.processor() == "i386":
                 self.platform[1] = ['mac64', 'mac-x64']
@@ -73,10 +73,13 @@ class WebDriverInstaller(object):
         if self.platform[0] == "linux":
             if self.custom_browser_location is not None:
                 browser_version = self.get_browser_version_from_cmd(self.custom_browser_location, GOOGLE_CHROME_RE)
+                browser_path = self.custom_browser_location
             else:
                 for executable in ["google-chrome", "google-chrome-stable", "google-chrome-beta", "google-chrome-dev", "chromium-browser", "chromium"]:
                     browser_version = self.get_browser_version_from_cmd(shutil.which(executable), GOOGLE_CHROME_RE)
-                    browser_path = shutil.which(executable)
+                    if browser_version is not None:
+                        browser_path = shutil.which(executable)
+                        break
         elif self.platform[0] == "mac":
             if self.custom_browser_location is not None:
                 browser_version = self.get_browser_version_from_cmd(self.custom_browser_location, GOOGLE_CHROME_RE)
@@ -138,7 +141,9 @@ class WebDriverInstaller(object):
             else:
                 for executable in ['microsoft-edge']:
                     browser_version = self.get_browser_version_from_cmd(shutil.which(executable), MICROSOFT_EDGE_RE)
-                    browser_path = shutil.which(executable)
+                    if browser_version is not None:
+                        browser_path = shutil.which(executable)
+                        break
         elif self.platform[0] == "mac":
             if self.custom_browser_location is not None:
                 browser_version = self.get_browser_version_from_cmd(self.custom_browser_location, MICROSOFT_EDGE_RE)
@@ -192,7 +197,9 @@ class WebDriverInstaller(object):
             else:
                 for executable in ['firefox']:
                     browser_version = self.get_browser_version_from_cmd(shutil.which(executable), MOZILLA_FIREFOX_RE)
-                    browser_path = shutil.which(executable)
+                    if browser_version is not None:
+                        browser_path = shutil.which(executable)
+                        break
         elif self.platform[0] == "mac":
             if self.custom_browser_location is not None:
                 browser_version = self.get_browser_version_from_cmd(self.custom_browser_location, MOZILLA_FIREFOX_RE)
