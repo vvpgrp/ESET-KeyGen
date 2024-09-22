@@ -1,4 +1,11 @@
-## 1. Generation using implemented email APIs
+## 1. How to generate multiple keys per run
+Add a command-line argument: ```--repeat {number}```
+
+```{number}``` - instead enter the number of keys from **1** to **10**
+
+---
+
+## 2. Generation using implemented email APIs
 > Also, if you see a message like **[INPT]** in the console, it means that you need to do keyboard input into the console!
 
 ---
@@ -11,7 +18,7 @@
   python main.py --chrome --key
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --key
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --key
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -29,7 +36,7 @@
   python main.py --chrome --small-business-key
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --small-business-key
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --small-business-key
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -47,7 +54,7 @@
   python main.py --chrome --endpoint-key
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --endpoint-key
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --endpoint-key
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -61,7 +68,7 @@
   ![Windows](https://github.com/rzc0d3r/ESET-KeyGen/blob/main/img/endpoint_key_run_win.png)
 </details>
 
-## 2. Generation using your email provider
+## 3. Generation using your email provider
 
 <details>
   <summary>ESET HOME Security Premium | ESET Small Business Security</summary>
@@ -72,7 +79,7 @@
   python main.py --chrome --key --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --key --custom-email-api
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --key --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -82,7 +89,7 @@
   python main.py --chrome --small-business-key --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --small-business-key --custom-email-api
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --small-business-key --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
@@ -117,7 +124,7 @@
   python main.py --chrome --endpoint-key --custom-email-api
   ```
   ```
-  ESET-KeyGen_v1.5.0.5_win64.exe --chrome --endpoint-key --custom-email-api
+  ESET-KeyGen_v1.5.0.8_win64.exe --chrome --endpoint-key --custom-email-api
   ```
   > File name is unique for each version! Do not copy the above command. This is an example!
 
