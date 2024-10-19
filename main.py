@@ -1,7 +1,9 @@
 from modules.EmailAPIs import *
 
+import sys
+
 # ---- Quick settings [for Developers to quickly change behavior without changing all files] ----
-VERSION = ['v1.5.1.2', 1512]
+VERSION = ['v1.5.2.2', 1522]
 LOGO = f"""
 ███████╗███████╗███████╗████████╗   ██╗  ██╗███████╗██╗   ██╗ ██████╗ ███████╗███╗   ██╗
 ██╔════╝██╔════╝██╔════╝╚══██╔══╝   ██║ ██╔╝██╔════╝╚██╗ ██╔╝██╔════╝ ██╔════╝████╗  ██║
@@ -15,6 +17,8 @@ LOGO = f"""
                                                               soladify, AngryBonk, Xoncia,
                                                               Anteneh13
 """
+if '--no-logo' in sys.argv:
+    LOGO = f"ESET KeyGen {VERSION[0]} by rzc0d3r\n"
 
 DEFAULT_EMAIL_API = 'developermail'
 AVAILABLE_EMAIL_APIS = ('1secmail', 'guerrillamail', 'developermail', 'mailticking')
@@ -34,7 +38,7 @@ args = {
 
     'key': True,
     'small_business_key': False,
-    'endpoint_key': False,
+    'advanced_key': False,
     'vpn_codes': False,
     'account': False,
     'protecthub_account': False,
@@ -73,24 +77,10 @@ import platform
 import datetime
 import argparse
 import time
-import sys
 import re
 
-if '--no-logo' in sys.argv:
-    LOGO = f"ESET KeyGen {VERSION[0]} by rzc0d3r\n"
-if datetime.datetime.now().day == 6 and datetime.datetime.now().month == 8: # Birthday of rzc0d3r
-    colored_logo = ''
-    colors = [getattr(Fore, attr) for attr in dir(Fore) if not attr.startswith('__')]
-    colors.remove(Fore.BLACK)
-    colors.remove(Fore.WHITE)
-    colors.remove(Fore.LIGHTWHITE_EX)
-    for line in LOGO.split('\n'):
-        for ch in line:
-            color = random.choice(colors)
-            colored_logo += (color+ch+Fore.RESET)
-        colored_logo += '\n'
-    colored_logo += f'{Fore.GREEN}rzc0d3r{Fore.RESET} celebrates his {Fore.LIGHTRED_EX}birthday{Fore.RESET} today!!! :)\n'
-    LOGO = colored_logo
+# -----------------------------------------------------------------------------------------------
+
 
 def RunMenu():
     MainMenu = ViewMenu(LOGO+'\n---- Main Menu ----')
@@ -110,7 +100,7 @@ def RunMenu():
             args,
             title='Modes of operation',
             action='store_true',
-            args_names=['key', 'small-business-key', 'endpoint-key', 'vpn-codes', 'account', 'protecthub-account', 'only-webdriver-update', 'update'],
+            args_names=['key', 'small-business-key', 'advanced-key', 'vpn-codes', 'account', 'protecthub-account', 'only-webdriver-update', 'update'],
             default_value='key')
     )
     SettingMenu.add_item(
@@ -213,7 +203,7 @@ def parse_argv():
         args_modes = args_parser.add_mutually_exclusive_group(required=True)
         args_modes.add_argument('--key', action='store_true', help='Creating a license key for ESET Smart Security Premium')
         args_modes.add_argument('--small-business-key', action='store_true', help='Creating a license key for ESET Small Business Security (1 key - 5 devices)')
-        args_modes.add_argument('--endpoint-key', action='store_true', help='Creating a license key for ESET Endpoint Security')
+        args_modes.add_argument('--advanced-key', action='store_true', help='Creating a license key for ESET PROTECT Advanced (1 key - 25 devices)')
         args_modes.add_argument('--vpn-codes', action='store_true', help='Creating 10 codes for ESET VPN + 1 ESET Small Business Security key')
         args_modes.add_argument('--account', action='store_true', help='Creating a ESET HOME Account (To activate the free trial version)')
         args_modes.add_argument('--protecthub-account', action='store_true', help='Creating a ESET ProtectHub Account (To activate the free trial version)')
@@ -248,11 +238,12 @@ def main(disable_exit=False):
         if not args['update']:
             if platform.release() == '7' and sys.platform.startswith('win'): # fix for Windows 7
                 args['no_headless'] = True
-            elif args['endpoint_key'] or args['protecthub_account']:
+            elif args['advanced_key'] or args['protecthub_account']:
                 args['no_headless'] = True
                 if not args['custom_email_api']:
-                    if args['email_api'] not in ['mailticking', 'developermail']:
-                        raise RuntimeError('--endpoint-key, --protecthub-account works ONLY if you use the --custom-email-api argument or the following Email APIs: mailticking, developermail!!!')
+                    if args['email_api'] not in ['mailticking']:
+                        raise RuntimeError('--advanced-key, --protecthub-account works ONLY if you use the --custom-email-api argument or the following Email APIs: mailticking!!!')
+        
         # check program updates
         if args['update']:
             print(f'{Fore.LIGHTMAGENTA_EX}-- Updater --{Fore.RESET}\n')
@@ -278,6 +269,7 @@ def main(disable_exit=False):
                         console_log('Project up to date!!!\n', OK)
             except:
                 pass
+        
         # initialization and configuration of everything necessary for work            
         driver = None
         webdriver_path = None
@@ -382,7 +374,7 @@ def main(disable_exit=False):
                             ])
 
             # ESET ProtectHub
-            elif args['protecthub_account'] or args['endpoint_key']:
+            elif args['protecthub_account'] or args['advanced_key']:
                 EPHR_obj = EPHR(email_obj, eset_password, driver)
                 EPHR_obj.createAccount()
                 EPHR_obj.confirmAccount()
@@ -396,7 +388,7 @@ def main(disable_exit=False):
                         ''
                 ])    
                 output_filename = 'ESET ACCOUNTS.txt'
-                if args['endpoint_key']:
+                if args['advanced_key']:
                     output_filename = 'ESET KEYS.txt'
                     EPHK_obj = EPHK(email_obj, eset_password, driver)
                     license_name, license_key, license_out_date = EPHK_obj.getLicenseData()
