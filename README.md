@@ -1,5 +1,5 @@
 # ESET-KeyGen
-ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 21.10.2024 at 03:52 UTC+3)
+ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on 02.11.2024 at 15:19 UTC+3)
 
 # Project Preview
 ![](img/project_preview.png)
@@ -17,7 +17,7 @@ ESET-KeyGen - Trial-Key & Account generator for ESET Antivirus (last test was on
 - Current Status: Active development
 
 ## Known Errors
-- White browser window while not in use **--no-headless**
+- **Mailticking** added **cloudflare** captcha
 - **ACT0** error may occur during activation in some cases
 - **ecp4125** activation error has been reported by some users
 - **ESET ProtectHub** has an aggressive policy for temporary email addresses!
