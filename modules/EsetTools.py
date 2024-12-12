@@ -76,7 +76,12 @@ class EsetRegister(object):
         console_log('\nAccount confirmation is in progress...', INFO)
         self.driver.get(f'https://login.eset.com/link/confirmregistration?token={token}')
         uCE(self.driver, 'return document.title === "ESET HOME"')
-        uCE(self.driver, f'return {GET_EBCN}("verification-email_p").length === 0')
+        try:
+            uCE(self.driver, f'return {GET_EBCN}("verification-email_p").length === 0')
+        except:
+            self.driver.get(f'https://login.eset.com/link/confirmregistration?token={token}')
+            uCE(self.driver, 'return document.title === "ESET HOME"')
+            uCE(self.driver, f'return {GET_EBCN}("verification-email_p").length === 0')
         console_log('Account successfully confirmed!', OK)
         return True
 
@@ -125,7 +130,7 @@ class EsetKeygen(object):
         exec_js = self.driver.execute_script
         uCE = untilConditionExecute
         console_log('\nLicense uploads...', INFO)
-        uCE(self.driver, f"return {GET_EBAV}('div', 'class', 'LicenseDetailInfo') != null")
+        uCE(self.driver, f"return {GET_EBAV}('div', 'data-label', 'license-detail-info') != null", raise_exception_if_failed=False)
         if self.driver.current_url.find('detail') != -1:
             console_log(f'License ID: {self.driver.current_url[-11:]}', OK)
         uCE(self.driver, f"return {GET_EBAV}('div', 'data-label', 'license-detail-product-name') != null", max_iter=10)
